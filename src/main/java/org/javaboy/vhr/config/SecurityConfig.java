@@ -90,7 +90,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessHandler(new LogoutSuccessHandler() {
                     @Override
                     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-
+                        response.setContentType("application/json:charset=utf-8");
+                        PrintWriter writer = response.getWriter();
+                        writer.write(new ObjectMapper().writeValueAsString(RespBean.ok("log out")));
+                        writer.flush();
+                        writer.close();
                     }
                 }).permitAll()
                 .and()
