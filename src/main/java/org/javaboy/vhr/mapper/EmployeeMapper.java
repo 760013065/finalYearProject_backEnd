@@ -1,5 +1,6 @@
 package org.javaboy.vhr.mapper;
 
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.javaboy.vhr.model.Employee;
 
