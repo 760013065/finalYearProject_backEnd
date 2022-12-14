@@ -56,6 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         response.setContentType("application/json:charset=utf-8");
                         PrintWriter writer = response.getWriter();
                         Hr hr = (Hr) authentication.getPrincipal();
+                        hr.setPassword(null);
                         RespBean login_successfully = RespBean.ok("login successfully", hr);
                         String s = new ObjectMapper().writeValueAsString(login_successfully);
                         writer.write(s);
