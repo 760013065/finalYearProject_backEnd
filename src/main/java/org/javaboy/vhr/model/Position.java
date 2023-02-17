@@ -70,4 +70,14 @@ public class Position implements Serializable {
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
+
+    @Override
+    public String toString() {
+        return "Position{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", createDate=" + createDate +
+                ", enabled=" + enabled +
+                '}';
+    }
 }

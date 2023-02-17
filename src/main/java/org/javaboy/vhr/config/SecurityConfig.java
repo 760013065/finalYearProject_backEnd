@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.*;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -17,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 import javax.annotation.Resource;
@@ -30,6 +32,8 @@ import java.io.PrintWriter;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Resource
     HrService hrService;
+    @Autowired
+    VerificationCodeFilter verificationCodeFilter;
 
     @Bean
     PasswordEncoder passwordEncoder(){
@@ -41,7 +45,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/css/**", "/js/**", "/index.html", "/img/**", "/fonts/**", "/favicon.ico", "/verifyCode","/empLogin","/training/basic/empApp","/training/basic/empPlan","/pro/basic/empTask");
+    }
+
+
+    @Override
     protected void configure(HttpSecurity http) throws Exception {
+        http.addFilterBefore(verificationCodeFilter, UsernamePasswordAuthenticationFilter.class);
         http.authorizeRequests()
                 .anyRequest().authenticated()
                 .and()
@@ -53,7 +64,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .successHandler(new AuthenticationSuccessHandler() {
                     @Override
                     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-                        response.setContentType("application/json:charset=utf-8");
+                        response.setContentType("application/json;charset=utf-8");
                         PrintWriter writer = response.getWriter();
                         Hr hr = (Hr) authentication.getPrincipal();
                         hr.setPassword(null);
@@ -66,7 +77,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 }).failureHandler(new AuthenticationFailureHandler() {
                     @Override
                     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-                        response.setContentType("application/json:charset=utf-8");
+                        response.setContentType("application/json;charset=utf-8");
                         PrintWriter writer = response.getWriter();
                         RespBean login_failure = RespBean.error("Login failure");
                         if(exception instanceof LockedException){
@@ -88,10 +99,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 }).permitAll()
                 .and()
                 .logout()
+                .logoutUrl("/logout")
                 .logoutSuccessHandler(new LogoutSuccessHandler() {
                     @Override
                     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-                        response.setContentType("application/json:charset=utf-8");
+                        response.setContentType("application/json;charset=utf-8");
                         PrintWriter writer = response.getWriter();
                         writer.write(new ObjectMapper().writeValueAsString(RespBean.ok("log out")));
                         writer.flush();

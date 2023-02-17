@@ -1,6 +1,5 @@
 package org.javaboy.vhr.model;
 
-
 public class RespBean {
     private Integer status;
     private String msg;

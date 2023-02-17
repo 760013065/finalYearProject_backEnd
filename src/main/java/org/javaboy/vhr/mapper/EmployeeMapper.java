@@ -1,36 +1,51 @@
 package org.javaboy.vhr.mapper;
 
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.javaboy.vhr.model.Employee;
 
-import java.util.Date;
 import java.util.List;
 
 public interface EmployeeMapper {
-    int deleteByPrimaryKey(Integer id);
+    @Select({"SELECT * from employee limit #{page} , #{size}"})
+    List<Employee> getEmployeeByPage(Integer page,Integer size);
 
-    int insert(Employee record);
+    @Select({"SELECT count(*) from employee"})
+    Long getTotal();
 
-    int insertSelective(Employee record);
+    @Select({"SELECT * from employee where name like concat('%',#{name},'%') limit #{page} , #{size}"})
+    List<Employee> empSearch1(Integer page,Integer size,String name);
 
-    Employee selectByPrimaryKey(Integer id);
+    @Select({"select count(name) from employee where name like concat('%',#{name},'%')"})
+    Long getTotal1(String name);
 
-    int updateByPrimaryKeySelective(Employee record);
+    @Select({"SELECT * from employee where jobNumber = #{jobNumber}"})
+    List<Employee> empSearch2(String jobNumber);
 
-    int updateByPrimaryKey(Employee record);
+    @Insert({
+            "INSERT INTO employee (name,gender,jobNumber,age,birthday,idCard,address,nation,email," +
+                    "phone,department,position) " +
+                    "VALUES(#{name},#{gender},#{jobNumber},#{age},#{birthday},#{idCard},#{address},#{nation}," +
+                    "#{email},#{phone},#{department},#{position})\n"
+    })
+    Integer insertEmp(Employee employee);
 
-    List<Employee> getEmployeeByPage(@Param("page") Integer page, @Param("size") Integer size, @Param("emp") Employee employee,@Param("beginDateScope") Date[] beginDateScope);
+    @Select({"SELECT max(jobNumber) FROM employee"})
+    Integer maxJobNumber();
 
-    Long getTotal(@Param("emp") Employee employee,@Param("beginDateScope") Date[] beginDateScope);
+    @Delete({"delete from employee where jobNumber= #{jobNumber}"})
+    int delEmp(Integer jobNumber);
 
-    Integer maxWorkID();
+    @Update({"update employee set name= #{name},gender=#{gender},birthday=#{birthday}," +
+            "age=#{age},idCard=#{idCard},address=#{address},nation=#{nation},email=#{email}," +
+            "phone=#{phone},department=#{department},position=#{position} where jobNumber=#{jobNumber}"})
+    int updateEmp(Employee employee);
 
-    Integer addEmps(@Param("list") List<Employee> list);
+    @Select({"select * from employee where jobNumber=#{jobNumber}"})
+    Employee selectByJobNumber(String jobNumber);
 
-    Employee getEmployeeById(Integer id);
-
-    List<Employee> getEmployeeByPageWithSalary(@Param("page") Integer page, @Param("size") Integer size);
-
-    Integer updateEmployeeSalaryById(@Param("eid") Integer eid, @Param("sid") Integer sid);
+    @Select({"select jobNumber from employee where name=#{name}"})
+    String getEmpByName(String name);
 }
