@@ -8,16 +8,14 @@ import org.javaboy.vhr.service.TrainingService;
 import org.javaboy.vhr.utils.MD5;
 import org.javaboy.vhr.utils.Mail;
 import org.junit.jupiter.api.Test;
+import org.junit.platform.commons.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 @SpringBootTest
 class AllTests {
@@ -375,7 +373,8 @@ EmpLoginMapper empLoginMapper;
             System.out.println(p);
         }
     }
-
+@Resource
+InterestMapper interestMapper;
     @Test
     void empTask(){
 //        for (Task task : projectMapper.getTaskByNum("10003")) {
@@ -383,9 +382,28 @@ EmpLoginMapper empLoginMapper;
 //        }
 //        String empByName = employeeMapper.getEmpByName("Jordan");
 //        System.out.println(empByName);
-        Project proById = projectMapper.getProById(10);
-        System.out.println(proById);
+//        Project proById = projectMapper.getProById(10);
+//        System.out.println(proById);
+//        Employee mike = employeeMapper.getEmpAllByName("mike");
+//        System.out.println(mike);
+//        Interest interest=new Interest();
+//        interest.setDescription("bad");
+//        interest.setJobNumber("10003");
+//        interest.setInterest("sports");
+//        interest.setId(7);
+//        interestMapper.updateInterest(interest);
+        Skill skill=new Skill();
+        skill.setJobNumber("10003");
+        skill.setSkill("coding");
+        skill.setDescription("good");
+        skillMapper.addSkill(skill);
 
+    }
+
+    @Test
+    void leetcode(){
+        String str="123";
+        System.out.println(str.substring(0,0));
     }
 
 

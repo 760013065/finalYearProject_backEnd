@@ -1,11 +1,9 @@
 package org.javaboy.vhr.controller;
 
 import org.javaboy.vhr.mapper.AppMapper;
+import org.javaboy.vhr.mapper.EmployeeMapper;
 import org.javaboy.vhr.mapper.PlanMapper;
-import org.javaboy.vhr.model.Application;
-import org.javaboy.vhr.model.Plan;
-import org.javaboy.vhr.model.RespBean;
-import org.javaboy.vhr.model.RespPageBean;
+import org.javaboy.vhr.model.*;
 import org.javaboy.vhr.service.TrainingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +23,8 @@ public class TrainingController {
     PlanMapper planMapper;
     @Resource
     AppMapper appMapper;
+    @Resource
+    EmployeeMapper employeeMapper;
 
     @GetMapping("/empPlan")
     RespPageBean empPlan(String username){
@@ -35,10 +35,13 @@ public class TrainingController {
     }
 
     @PostMapping("/empApp")
-    RespBean empApp(@RequestBody Application application){
+    RespBean empApp(@RequestBody Application application,String username){
         Date date=new Date(System.currentTimeMillis());
         application.setAppTime(date);
         application.setStatus("unprocessed");
+        application.setEmpName(username);
+        Employee emp = employeeMapper.getEmpAllByName(username);
+        application.setEmpNum(emp.getJobNumber());
         if (appMapper.insertApp(application)==1) {
             return RespBean.ok("submit successfully");
         }else{

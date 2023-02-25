@@ -48,4 +48,7 @@ public interface EmployeeMapper {
 
     @Select({"select jobNumber from employee where name=#{name}"})
     String getEmpByName(String name);
+
+    @Select({"select * from employee where name=#{name}"})
+    Employee getEmpAllByName(String name);
 }

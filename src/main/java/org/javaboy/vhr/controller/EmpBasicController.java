@@ -1,6 +1,7 @@
 package org.javaboy.vhr.controller;
 
 
+import org.apache.commons.lang.StringUtils;
 import org.javaboy.vhr.mapper.*;
 import org.javaboy.vhr.model.*;
 import org.javaboy.vhr.service.EmployeeService;
@@ -37,6 +38,127 @@ public class EmpBasicController {
 
     @Resource
     EducationMapper educationMapper;
+
+    @PostMapping("profile/addEdu")
+    void add4(@RequestBody Education education,String username){
+        Employee emp = employeeMapper.getEmpAllByName(username);
+        if(!StringUtils.isBlank(education.getDegree())){
+            if(education.getId()==null){
+                education.setJobNumber(emp.getJobNumber());
+                educationMapper.add(education);
+            }else{
+                educationMapper.update(education);
+            }
+        }
+    }
+
+    @PostMapping("profile/addExp")
+    void add3(@RequestBody Experience exp,String username){
+        Employee emp = employeeMapper.getEmpAllByName(username);
+        if(!StringUtils.isBlank(exp.getPosition())){
+            if(exp.getId()==null){
+                exp.setJobNumber(emp.getJobNumber());
+                experienceMapper.addExp(exp);
+            }else{
+                experienceMapper.update(exp);
+            }
+        }
+    }
+
+    @PostMapping("/profile/addSkills")
+    void add2(@RequestBody Skill i,String username){
+        Employee e = employeeMapper.getEmpAllByName(username);
+        if(!StringUtils.isBlank(i.getSkill())){
+            if(i.getId()==null){
+                i.setJobNumber(e.getJobNumber());
+                skillMapper.addSkill(i);
+            }else{
+                skillMapper.updateSkill(i);
+            }
+        }
+    }
+
+    @PostMapping("/profile/addInterest")
+    void add1(@RequestBody Interest i,String username){
+        Employee e = employeeMapper.getEmpAllByName(username);
+        if(!StringUtils.isBlank(i.getInterest())){
+            if(i.getId()==null){
+                i.setJobNumber(e.getJobNumber());
+                interestMapper.addInterest(i);
+            }else{
+                interestMapper.updateInterest(i);
+            }
+        }
+    }
+    @DeleteMapping("/profile/delInterest")
+    RespBean del1(int id){
+        if (interestMapper.delInterest(id)==1) {
+            return RespBean.ok("delete successfully");
+        }else{
+            return RespBean.error("delete error");
+        }
+    }
+    @DeleteMapping("/profile/delSkill")
+    RespBean del2(int id){
+        if (skillMapper.delSki(id)==1) {
+            return RespBean.ok("delete successfully");
+        }else{
+            return RespBean.error("delete error");
+        }
+    }
+
+    @DeleteMapping("/profile/delExp")
+    RespBean del3(int id){
+        if (experienceMapper.delExp(id)==1) {
+            return RespBean.ok("delete successfully");
+        }else{
+            return RespBean.error("delete error");
+        }
+    }
+
+    @DeleteMapping("/profile/delEdu")
+    RespBean del4(int id){
+        if (educationMapper.delEdu(id)==1) {
+            return RespBean.ok("delete successfully");
+        }else{
+            return RespBean.error("delete error");
+        }
+    }
+
+
+
+    @GetMapping("/empWork")
+    List<Experience> getEmpWork(String username){
+        Employee emp = employeeMapper.getEmpAllByName(username);
+        List<Experience> experiences = experienceMapper.selectExperience(emp.getJobNumber());
+        return experiences;
+    }
+
+    @GetMapping("/empEducation")
+    List<Education> getEmpEdu(String username){
+        Employee emp = employeeMapper.getEmpAllByName(username);
+        List<Education> educations = educationMapper.selectEducation(emp.getJobNumber());
+        return educations;
+    }
+
+    @GetMapping("/empProfile")
+    Employee getEmpProfile(String username){
+        Employee empAllByName = employeeMapper.getEmpAllByName(username);
+        return empAllByName;
+    }
+
+    @GetMapping("/empInterest")
+    List<Interest> getEmpInterest(String username){
+        Employee emp = employeeMapper.getEmpAllByName(username);
+        List<Interest> interests = interestMapper.selectInterest(emp.getJobNumber());
+        return interests;
+    }
+    @GetMapping("/empSkill")
+    List<Skill> getEmpSkill(String username){
+        Employee emp = employeeMapper.getEmpAllByName(username);
+        List<Skill> skills = skillMapper.selectSkill(emp.getJobNumber());
+        return skills;
+    }
 
     @GetMapping("/")
     public RespPageBean getEmployeeByPage(@RequestParam(defaultValue = "1") Integer page,
