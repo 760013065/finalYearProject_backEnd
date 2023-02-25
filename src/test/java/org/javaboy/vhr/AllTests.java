@@ -402,8 +402,7 @@ InterestMapper interestMapper;
 
     @Test
     void leetcode(){
-        String str="123";
-        System.out.println(str.substring(0,0));
+        
     }
 
 
